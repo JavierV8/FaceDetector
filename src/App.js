@@ -4,13 +4,18 @@ import { useEffect } from 'react';
 
 function App() {
 
-
   // LOAD OPENCV
   useEffect(() => {
     window.Module = {
       wasmBinaryFile: './opencv/opencv_js.wasm',
-      _main: function() {alert("LOADED")}
-    };
+     preRun: [function() {
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', './opencv/models/haarcascade_eye.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', './opencv/models/haarcascade_frontalface_default.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', './opencv/models/haarcascade_profileface.xml', true, false);
+     }],
+     _main: function() {alert("LOADED!!!")}
+   };
+  
     // CV script fails to load
     const onCVLoadError = () => {
       console.error('Failed to load/initialize cv.js');
@@ -36,28 +41,19 @@ function App() {
     document.head.appendChild(script);
   }, []);
 
-
-  useEffect(() => {
-    let imgElement = document.getElementById('srcImage')
-    let inputElement = document.getElementById('fileInput');
-    inputElement.addEventListener("change", (e) => {
-      imgElement.src = URL.createObjectURL(e.target.files[0]);
-    }, false);
-    imgElement.onload = function() {
-      let mat = window.cv.imread(imgElement);
-      window.cv.cvtColor(mat, mat, window.cv.COLOR_RGBA2GRAY);
-      window.cv.imshow('outputCanvas', mat);
-      mat.delete();
-    }
-  }, [])
-
   return (
     <div className="App">
-      <p id='status'>OpenCV.js (WebAssembly) is loading...</p>
-      <input type='file' id='fileInput' accept='image/gif, image/jpeg, image/png'/>
-      <div>
-          <img id='srcImage' alt="img"></img>
-          <canvas id='outputCanvas'></canvas>
+      <div id="container">
+          <canvas className="center-block" id="canvasOutput" width="320" height="240"></canvas>
+      </div>
+      <div className="text-center">
+          <input type="checkbox" id="face" name="classifier" value="face" checked></input>
+          <label for="face">face</label>
+          <input type="checkbox" id="eye" name="cascade" value="eye"></input>
+          <label for="eye">eye</label>
+      </div>
+      <div className="invisible">
+          <video id="video" className="hidden">Your browser does not support the video tag.</video>
       </div>
     </div>
   );
