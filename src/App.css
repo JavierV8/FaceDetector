@@ -1,9 +1,18 @@
 .App {
   text-align: center;
+  display: flex;
 }
 .videoCamera {
   width: 45%;
   height: 100%;
   border: 1px solid red;
 }
-
+.videoOutput {
+  border: 1px solid red;
+  position: absolute;
+  z-index: 1;
+  width: 45%;
+}
+.detectionCanvas {
+  display: none;
+}
