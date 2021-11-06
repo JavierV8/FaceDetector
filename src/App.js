@@ -1,11 +1,19 @@
-
+import React, { useEffect, useRef } from "react";
 import './App.css';
-import { useEffect } from 'react';
 
-function App() {
+const App = () => {
+  const videoRef = useRef(null);
 
-  // LOAD OPENCV
+    // LOAD OPENCV
   useEffect(() => {
+      loadOpenCV();
+  }, []);
+
+  useEffect(() => {
+    launchVideoCamera();
+  }, []);
+
+  const loadOpenCV = () => {
     window.Module = {
       wasmBinaryFile: './opencv/opencv_js.wasm',
      preRun: [function() {
@@ -13,7 +21,7 @@ function App() {
        window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', './opencv/models/haarcascade_frontalface_default.xml', true, false);
        window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', './opencv/models/haarcascade_profileface.xml', true, false);
      }],
-     _main: function() {alert("LOADED!!!")}
+     _main: function() {console.log("LOADED!!!")}
    };
   
     // CV script fails to load
@@ -39,24 +47,38 @@ function App() {
     script.addEventListener('load', () => onRuntimeInitialized());
     script.addEventListener('error', () => onCVLoadError());
     document.head.appendChild(script);
-  }, []);
+  }
+
+  const launchVideoCamera = async () => {
+    const constraints = {
+      video: {
+        width: 1280, 
+        height: 720,
+        facingMode: "user",
+      },
+      audio: false,
+    };
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      //setStreams(stream);
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+      console.log("Video PLAYED!")
+    } catch {
+      console.log("WWW")
+    }
+  };
 
   return (
     <div className="App">
-      <div id="container">
-          <canvas className="center-block" id="canvasOutput" width="320" height="240"></canvas>
-      </div>
-      <div className="text-center">
-          <input type="checkbox" id="face" name="classifier" value="face" checked></input>
-          <label for="face">face</label>
-          <input type="checkbox" id="eye" name="cascade" value="eye"></input>
-          <label for="eye">eye</label>
-      </div>
-      <div className="invisible">
-          <video id="video" className="hidden">Your browser does not support the video tag.</video>
-      </div>
+        <video
+          ref={videoRef}
+          className="videoCamera"
+        />
     </div>
   );
-}
+};
 
 export default App;
+
+
