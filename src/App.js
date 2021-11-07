@@ -31,11 +31,11 @@ const App = () => {
 
   const loadOpenCV = () => {
     window.Module = {
-      wasmBinaryFile: './opencv/opencv_js.wasm',
+      wasmBinaryFile: process.env.PUBLIC_URL + '/opencv/opencv_js.wasm',
      preRun: [function() {
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', './opencv/models/haarcascade_eye.xml', true, false);
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', './opencv/models/haarcascade_frontalface_default.xml', true, false);
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', './opencv/models/haarcascade_profileface.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_eye.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_frontalface_default.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_profileface.xml', true, false);
      }],
      _main: function() {
        console.log("LOADED!!!");
@@ -61,7 +61,7 @@ const App = () => {
       }
     };
     const script = document.createElement('script');
-    script.setAttribute('src', './opencv/opencv.js');
+    script.setAttribute('src', process.env.PUBLIC_URL + '/opencv/opencv.js');
     script.setAttribute('type', 'application/javascript');
     script.addEventListener('load', () => onRuntimeInitialized());
     script.addEventListener('error', () => onCVLoadError());
