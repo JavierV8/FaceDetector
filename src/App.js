@@ -13,12 +13,20 @@ const App = () => {
 
     // LOAD OPENCV
   useEffect(() => {
-      loadOpenCV();
+    loadOpenCV();
   }, []);
 
+  // Load frontalFace Model
   useEffect(() => {
-    launchVideoCamera();
-  }, []);
+    if (faceClassifier) {
+      try {
+        faceClassifier.load('haarcascade_frontalface_default.xml');
+        processVideo();
+      }catch (e) {
+        console.log("ERROR LOADING MODEL", e)
+      }
+    }
+  }, [faceClassifier]);
 
   const loadOpenCV = () => {
     window.Module = {
@@ -28,7 +36,10 @@ const App = () => {
        window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', './opencv/models/haarcascade_frontalface_default.xml', true, false);
        window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', './opencv/models/haarcascade_profileface.xml', true, false);
      }],
-     _main: function() {console.log("LOADED!!!")}
+     _main: function() {
+       console.log("LOADED!!!");
+       launchVideoCamera();
+      }
    };
   
     // CV script fails to load
@@ -66,49 +77,34 @@ const App = () => {
       audio: false,
     };
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await window.navigator.mediaDevices.getUserMedia(constraints);
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
       console.log("Video PLAYED!")
       startVideoProcessing()
-    } catch {
-      console.log("ERRROR CAMERA")
+    } catch (e) {
+      console.log("ERRROR CAMERA", e)
     }
   };
 
-
-  function startVideoProcessing() {
+  const startVideoProcessing = () => {
     detectionCanvas.current.width = videoRef.current.videoWidth;
     detectionCanvas.current.height = videoRef.current.videoHeight;
     outputCanvas.current.width = videoRef.current.videoWidth;
     outputCanvas.current.height = videoRef.current.videoHeight;
+    videoRef.current.style.height = outputCanvas.current.height + "px";
     
 
     setDetectionCanvasCtx(detectionCanvas.current.getContext('2d'));
     setOutputCanvasCtx(outputCanvas.current.getContext('2d'));
-    
+
     setSRCMat(new window.cv.Mat(videoRef.current.videoHeight, videoRef.current.videoWidth, window.cv.CV_8UC4));
     setGrayMat(new window.cv.Mat(videoRef.current.videoHeight, videoRef.current.videoWidth, window.cv.CV_8UC1));
 
     setFaceClassifier(new window.cv.CascadeClassifier());
-
-
-    
-    //processVideo();
   }
 
-  useEffect(() => {
-    if ( faceClassifier) {
-      try {
-        faceClassifier.load('haarcascade_frontalface_default.xml');
-        processVideo();
-      }catch (e) {
-        console.log("ERROR LOADING MODEL", e)
-      }
-    }
-  }, [faceClassifier])
-
-  function drawResults(ctx, results, color, size) {
+  const drawResults = (ctx, results, color, size) => {
     for (let i = 0; i < results.length; ++i) {
       let rect = results[i];
       let xRatio = videoRef.current.videoWidth/size.width;
@@ -119,9 +115,7 @@ const App = () => {
     }
   }
 
-
-
-  function processVideo() {
+  const processVideo = () => {
     //Paint frame to canvas
     outputCanvasCtx.clearRect(0, 0, outputCanvas.current.width, outputCanvas.current.height);
     detectionCanvasCtx.drawImage(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight);
@@ -148,6 +142,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <h1 className="title">OpenCV Haar Cascades for Face Detection</h1>
         <video
           ref={videoRef}
           className="videoCamera"

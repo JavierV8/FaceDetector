@@ -1,17 +1,35 @@
+
 .App {
   text-align: center;
   display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+.title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 2%;
+  width: 80%;
+  font-size: 150%;
 }
 .videoCamera {
-  width: 45%;
-  height: 100%;
-  border: 1px solid red;
+  width: 70%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
 }
 .videoOutput {
-  border: 1px solid red;
   position: absolute;
   z-index: 1;
-  width: 45%;
+  width: 70%;
+  left:50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid rgb(247, 247, 247);
+  border-radius: 15px;
 }
 .detectionCanvas {
   display: none;
