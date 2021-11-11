@@ -14,6 +14,7 @@ const App = () => {
 
     // LOAD OPENCV
   useEffect(() => {
+    console.log(process.env.PUBLIC_URL)
     loadOpenCV();
   }, []);
 
@@ -31,11 +32,11 @@ const App = () => {
 
   const loadOpenCV = () => {
     window.Module = {
-      wasmBinaryFile: process.env.PUBLIC_URL + '/opencv/opencv_js.wasm',
-     preRun: [function() {
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_eye.xml', true, false);
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_frontalface_default.xml', true, false);
-       window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', process.env.PUBLIC_URL + '/opencv/models/haarcascade_profileface.xml', true, false);
+      wasmBinaryFile: 'https://firebasestorage.googleapis.com/v0/b/haarcascades-facedetector.appspot.com/o/opencv_js.wasm?alt=media&token=8e28ce76-c03f-4def-9a2d-5e3326009894',
+      preRun: [function() {
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_eye.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_frontalface_default.xml', true, false);
+       window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_profileface.xml', true, false);
      }],
      _main: function() {
        console.log("LOADED!!!");
@@ -61,7 +62,7 @@ const App = () => {
       }
     };
     const script = document.createElement('script');
-    script.setAttribute('src', process.env.PUBLIC_URL + '/opencv/opencv.js');
+    script.setAttribute('src', './opencv/opencv.js');
     script.setAttribute('type', 'application/javascript');
     script.addEventListener('load', () => onRuntimeInitialized());
     script.addEventListener('error', () => onCVLoadError());
