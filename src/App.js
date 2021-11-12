@@ -14,7 +14,6 @@ const App = () => {
 
     // LOAD OPENCV
   useEffect(() => {
-    console.log(process.env.PUBLIC_URL)
     loadOpenCV();
   }, []);
 
@@ -32,14 +31,14 @@ const App = () => {
 
   const loadOpenCV = () => {
     window.Module = {
-      wasmBinaryFile: 'https://firebasestorage.googleapis.com/v0/b/haarcascades-facedetector.appspot.com/o/opencv_js.wasm?alt=media&token=8e28ce76-c03f-4def-9a2d-5e3326009894',
+      wasmBinaryFile: './opencv/opencv_js.wasm',
       preRun: [function() {
        window.Module.FS_createPreloadedFile('/', 'haarcascade_eye.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_eye.xml', true, false);
        window.Module.FS_createPreloadedFile('/', 'haarcascade_frontalface_default.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_frontalface_default.xml', true, false);
        window.Module.FS_createPreloadedFile('/', 'haarcascade_profileface.xml', 'https://raw.githubusercontent.com/JavierV8/FaceDetector/main/public/opencv/models/haarcascade_profileface.xml', true, false);
      }],
      _main: function() {
-       console.log("LOADED!!!");
+       console.info("openCV WASM Loaded!");
        launchVideoCamera();
       }
    };
@@ -54,10 +53,10 @@ const App = () => {
         if (window.cv instanceof Promise) {
           window.cv.then(target => {
             window.cv = target;
-            console.log("1LOAD")
+            console.info("Opencv Loaded");
           });
         } else {
-          console.log("1LOAD")
+          console.info("Opencv Loaded");
         }
       }
     };
