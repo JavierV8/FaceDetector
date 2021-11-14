@@ -5,7 +5,7 @@ OpenCV imeplemntation of the famous Viola Jones algorithm named after two comput
 It’s a machine learning algorithm for face detection that needs a lot of positive images (images of faces) and negative images (images without faces) to train the classifier. The implementation of the Viola Jones algorithm in OpenCV came with diferents classifiers, so it can be used to detect other things like eyes, hands or profile face.
 
 ## How it works
----
+
 Given an image(this algorithm works on grayscale image), the algorithm looks at many smaller subregions and tries to find a face by looking for specific features in each subregion. It needs to check many different positions and scales because an image can contain many faces of various sizes. Viola and Jones used Haar-like features to detect faces in this algorithm.
 
 The Viola Jones algorithm has four main steps to follow:
